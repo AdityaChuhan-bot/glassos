@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { MOCK_APPS } from '../constants';
 import { AppIcon } from './AppIcon';
 import { Search } from 'lucide-react';
+import { useLauncher } from '../context/LauncherContext';
 
 export const AppLibrary: React.FC = () => {
   const categories = ['Social', 'Entertainment', 'Productivity', 'Utilities', 'Games', 'Other'] as const;
+  const { openApp } = useLauncher();
 
   return (
     <div className="p-6 pt-16 pb-32 h-full overflow-y-auto custom-scrollbar">
@@ -30,7 +32,7 @@ export const AppLibrary: React.FC = () => {
               </span>
               <div className="grid grid-cols-2 gap-2">
                 {categoryApps.slice(0, 4).map(app => (
-                  <AppIcon key={app.id} app={app} size="sm" showLabel={false} />
+                  <AppIcon key={app.id} app={app} size="sm" showLabel={false} onClick={() => openApp(app.id)} />
                 ))}
               </div>
             </div>

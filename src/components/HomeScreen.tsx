@@ -8,11 +8,17 @@ import { RotateCcw, Check } from 'lucide-react';
 
 export const HomeScreen: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const { isEditMode, setIsEditMode, homeApps, resetHomeScreen } = useLauncher();
+  const { isEditMode, setIsEditMode, homeApps, resetHomeScreen, openApp, setAppDrawerOpen } = useLauncher();
   const totalPages = 3; // 2 home pages + 1 library
 
   const handleDragEnd = (_: any, info: any) => {
     const threshold = 50;
+    // Check vertical drag first to open drawer
+    if (info.offset.y < -35) {
+      setAppDrawerOpen(true);
+      return;
+    }
+
     if (info.offset.x < -threshold && currentPage < totalPages - 1) {
       setCurrentPage(prev => prev + 1);
     } else if (info.offset.x > threshold && currentPage > 0) {
@@ -100,14 +106,14 @@ export const HomeScreen: React.FC = () => {
           </div>
 
           {page1Apps.map(app => (
-            <AppIcon key={app.id} app={app} />
+            <AppIcon key={app.id} app={app} onClick={() => openApp(app.id)} />
           ))}
         </div>
 
         {/* Page 2: More Apps */}
         <div className="min-w-full h-full p-6 pt-24 grid grid-cols-4 grid-rows-6 gap-x-5 gap-y-7 content-start">
           {page2Apps.map(app => (
-            <AppIcon key={app.id} app={app} />
+            <AppIcon key={app.id} app={app} onClick={() => openApp(app.id)} />
           ))}
           {page2Apps.length === 0 && (
             <div className="col-span-4 row-span-4 flex flex-col items-center justify-center text-center text-white/30 text-xs px-10 gap-2">
@@ -122,8 +128,22 @@ export const HomeScreen: React.FC = () => {
         </div>
       </motion.div>
 
+      {/* Upward swipe indicator to open App Drawer */}
+      <div className="fixed bottom-[145px] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer text-white/50 hover:text-white/85 active:scale-95 transition-all text-[9.5px] uppercase tracking-[0.2em] font-sans font-black"
+        onClick={() => setAppDrawerOpen(true)}
+      >
+        <motion.span 
+          animate={{ y: [0, -3, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+          className="text-emerald-400 font-bold"
+        >
+          ▲
+        </motion.span>
+        Swipe Up / Tap
+      </div>
+
       {/* Page Indicators */}
-      <div className="fixed bottom-32 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+      <div className="fixed bottom-[115px] left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {Array.from({ length: totalPages }).map((_, i) => (
           <div 
             key={i} 

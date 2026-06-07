@@ -3,7 +3,7 @@ import {
   Phone, MessageSquare, Compass, Music, Image, Camera, 
   Mail, Calendar, FileText, Settings, ShoppingBag, Map, 
   Cloud, Clock, Calculator, Folder, List, Wallet, Heart, Zap, X,
-  Chrome, Play, Youtube
+  Chrome, Play, Youtube, Thermometer, Sliders
 } from 'lucide-react';
 import { AppInfo } from '../types';
 import { cn } from '../lib/utils';
@@ -14,7 +14,7 @@ const ICON_MAP: Record<string, any> = {
   Phone, MessageSquare, Compass, Music, Image, Camera, 
   Mail, Calendar, FileText, Settings, ShoppingBag, Map, 
   Cloud, Clock, Calculator, Folder, List, Wallet, Heart, Zap,
-  Chrome, Play, Youtube
+  Chrome, Play, Youtube, Thermometer, Sliders
 };
 
 interface AppIconProps {

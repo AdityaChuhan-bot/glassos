@@ -21,6 +21,9 @@ export const MOCK_APPS: AppInfo[] = [
   { id: 'wallet', name: 'Wallet', icon: 'Wallet', category: 'Utilities', color: 'bg-[#202124]' },
   { id: 'fit', name: 'Google Fit', icon: 'Heart', category: 'Utilities', color: 'bg-white' },
   { id: 'youtube', name: 'YouTube', icon: 'Youtube', category: 'Entertainment', color: 'bg-[#FF0000]' },
+  { id: 'heating', name: 'Heating Center', icon: 'Thermometer', category: 'Utilities', color: 'bg-gradient-to-tr from-amber-500 to-orange-600' },
+  { id: 'control', name: 'Control Center', icon: 'Sliders', category: 'Utilities', color: 'bg-[#2563EB]' },
+  { id: 'decoy', name: 'Calc Vault', icon: 'Calculator', category: 'Utilities', color: 'bg-[#5F6368]' },
 ];
 
 export const DOCK_APPS = ['phone', 'messages', 'chrome', 'music'];
