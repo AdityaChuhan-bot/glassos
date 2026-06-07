@@ -1,0 +1,5 @@
+{
+  "name": "GlassyOS Launcher",
+  "description": "A high-fidelity iOS-inspired Android launcher simulation with glassmorphism UI, Dynamic Island, and App Library.",
+  "requestFramePermissions": []
+}
