@@ -137,11 +137,11 @@ export const AppIcon: React.FC<AppIconProps> = ({ app, showLabel = true, size = 
           )}
         </AnimatePresence>
 
-        {/* Outer Icon Body with Premium Liquid Glass rendering */}
+        {/* Outer Icon Body with Clean Stock Premium Layout */}
         <motion.div 
           whileTap={!isEditMode ? { scale: 0.88 } : {}}
           className={cn(
-            "relative rounded-[1.3rem] flex items-center justify-center transition-all overflow-hidden border border-white/20 shadow-[0_5px_15px_rgba(0,0,0,0.2)]",
+            "relative rounded-[1.3rem] flex items-center justify-center transition-all overflow-hidden border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.15)]",
             app.color,
             sizeClasses[size],
             isEditMode && "shadow-[0_8px_20px_rgba(0,0,0,0.45)]"
@@ -152,26 +152,14 @@ export const AppIcon: React.FC<AppIconProps> = ({ app, showLabel = true, size = 
             <div className="absolute inset-0 bg-[#F2F2F7]/50 mix-blend-multiply pointer-events-none" />
           )}
 
-          {/* Liquid glass refraction base gradient (deep saturated bottom shadow and corner lights) */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-black/40 via-transparent to-white/20 pointer-events-none" />
+          {/* Subtle gradient for soft modern stock look */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-black/5 to-white/5 pointer-events-none" />
 
-          {/* Three-dimensional circular inner border ring (soft inner shadow glow) */}
-          <div className="absolute inset-[1px] rounded-[1.2rem] bg-gradient-to-b from-white/25 via-transparent to-black/30 pointer-events-none" />
-
-          {/* Curved liquid glass lens bubble sheen (renders the classic rounded iOS glossy lens cap) */}
-          <div className="absolute top-0 left-[-15%] w-[130%] h-[48%] bg-gradient-to-b from-white/40 via-white/10 to-transparent rounded-b-[45%] pointer-events-none" />
-
-          {/* Extreme top high-intensity reflection shine overlay */}
-          <div className="absolute top-[2px] right-[4px] w-[88%] h-[12%] bg-white/25 blur-[0.5px] rotate-[8deg] rounded-full pointer-events-none" />
-
-          {/* Bottom fluid horizon glow reflecting back up canva */}
-          <div className="absolute bottom-[3px] left-1/2 -translate-x-1/2 w-[65%] h-[12%] bg-white/15 blur-[0.5px] rounded-full pointer-events-none" />
-
-          {/* Main Original App Icon rendered center with deep dimensional drop shadow */}
+          {/* Main Original App Icon rendered center with soft clean dynamic drop shadow */}
           <Icon 
             size={iconSize[size]} 
             className={cn(
-              "relative z-10 transition-transform filter drop-shadow-[0_3px_5px_rgba(0,0,0,0.35)]",
+              "relative z-10 transition-transform filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)]",
               app.color === 'bg-white' ? 'text-gray-800' : 'text-white'
             )} 
           />

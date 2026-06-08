@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { AOD } from './components/AOD';
 import { LockScreen } from './components/LockScreen';
 import { HomeScreen } from './components/HomeScreen';
 import { Dock } from './components/Dock';
@@ -14,7 +13,7 @@ import { AppDrawer } from './components/AppDrawer';
 import { ControlCenterShade } from './components/ControlCenterShade';
 
 function DeviceFrame() {
-  const [screen, setScreen] = useState<ScreenState>('AOD');
+  const [screen, setScreen] = useState<ScreenState>('LOCK');
   const [isSpotlightOpen, setIsSpotlightOpen] = useState(false);
   const { 
     wallpaper, 
@@ -29,20 +28,16 @@ function DeviceFrame() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         if (isSpotlightOpen) setIsSpotlightOpen(false);
-        else setScreen('AOD');
+        else setScreen(prev => prev === 'LOCK' ? 'HOME' : 'LOCK');
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isSpotlightOpen]);
 
-  const handleWake = () => {
-    setScreen('LOCK');
-  };
-
-  const handleUnlock = () => {
+  const handleUnlock = useCallback(() => {
     setScreen('HOME');
-  };
+  }, []);
 
   return (
     <div className="relative w-full h-full bg-black overflow-hidden select-none">
@@ -52,13 +47,11 @@ function DeviceFrame() {
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 scale-[1.04]"
         style={{ 
           backgroundImage: `url(${wallpaper})`,
-          filter: screen === 'AOD' 
-            ? 'brightness(0.12) blur(30px)' 
-            : screen === 'LOCK'
-              ? 'brightness(0.68) blur(6px)'
-              : batterySaverActive
-                ? 'brightness(0.65)'
-                : 'brightness(0.9)'
+          filter: screen === 'LOCK'
+            ? 'brightness(0.68) blur(6px)'
+            : batterySaverActive
+              ? 'brightness(0.65)'
+              : 'brightness(0.9)'
         }}
       />
       
@@ -66,9 +59,7 @@ function DeviceFrame() {
       <div className="absolute inset-0 bg-[#000]/15 pointer-events-none z-0" />
 
       <AnimatePresence mode="wait">
-        {screen === 'AOD' ? (
-          <AOD key="aod" onWake={handleWake} />
-        ) : screen === 'LOCK' ? (
+        {screen === 'LOCK' ? (
           <LockScreen key="lock" onUnlock={handleUnlock} />
         ) : (
           <motion.div
@@ -126,20 +117,14 @@ function DeviceFrame() {
         )}
       </AnimatePresence>
 
-      {/* Glossy Hardware Frame Pill Button (Locks or steps system clock down) */}
-      {screen !== 'AOD' && (
-        <div 
-          id="hardware_locking_line"
-          className="fixed bottom-2.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/45 rounded-full z-50 cursor-pointer hover:bg-white/70 active:scale-95 transition-all"
-          onClick={() => {
-            if (screen === 'HOME') {
-              setScreen('LOCK');
-            } else if (screen === 'LOCK') {
-              setScreen('AOD');
-            }
-          }}
-        />
-      )}
+      {/* Glossy Hardware Frame Pill Button */}
+      <div 
+        id="hardware_locking_line"
+        className="fixed bottom-2.5 left-1/2 -translate-x-1/2 w-32 h-1 bg-white/45 rounded-full z-50 cursor-pointer hover:bg-white/70 active:scale-95 transition-all"
+        onClick={() => {
+          setScreen(prev => prev === 'LOCK' ? 'HOME' : 'LOCK');
+        }}
+      />
 
       {/* Interactive Flashlight Glow top beam indicator */}
       <AnimatePresence>

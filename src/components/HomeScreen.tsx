@@ -13,8 +13,9 @@ export const HomeScreen: React.FC = () => {
 
   const handleDragEnd = (_: any, info: any) => {
     const threshold = 50;
-    // Check vertical drag first to open drawer
-    if (info.offset.y < -35) {
+    
+    // Check if swipe gesture is primarily vertical to open the app drawer
+    if (info.offset.y < -35 && Math.abs(info.offset.y) > Math.abs(info.offset.x)) {
       setAppDrawerOpen(true);
       return;
     }
@@ -81,30 +82,6 @@ export const HomeScreen: React.FC = () => {
       >
         {/* Page 1: Widgets & Apps */}
         <div className="min-w-full h-full p-6 pt-24 grid grid-cols-4 grid-rows-6 gap-x-5 gap-y-7 content-start">
-          {/* Large Widget Simulation */}
-          <div className="col-span-2 row-span-2 bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-4 flex flex-col justify-between shadow-xl">
-            <div className="flex justify-between items-start">
-              <span className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Weather</span>
-              <span className="text-white text-xl font-medium">14°</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white text-sm font-bold">San Francisco</span>
-              <span className="text-white/60 text-[10px]">Mostly Cloudy</span>
-            </div>
-          </div>
-          
-          {/* Small Widget Simulation */}
-          <div className="col-span-2 row-span-2 bg-white/10 backdrop-blur-xl border border-white/10 rounded-3xl p-4 flex flex-col justify-between shadow-xl">
-             <div className="flex justify-between items-start">
-              <span className="text-white/60 text-[10px] font-bold uppercase tracking-wider">Calendar</span>
-              <span className="text-red-400 text-xs font-bold">MON</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white text-2xl font-light">17</span>
-              <span className="text-white/60 text-[10px]">No events today</span>
-            </div>
-          </div>
-
           {page1Apps.map(app => (
             <AppIcon key={app.id} app={app} onClick={() => openApp(app.id)} />
           ))}
@@ -128,19 +105,7 @@ export const HomeScreen: React.FC = () => {
         </div>
       </motion.div>
 
-      {/* Upward swipe indicator to open App Drawer */}
-      <div className="fixed bottom-[145px] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 z-20 cursor-pointer text-white/50 hover:text-white/85 active:scale-95 transition-all text-[9.5px] uppercase tracking-[0.2em] font-sans font-black"
-        onClick={() => setAppDrawerOpen(true)}
-      >
-        <motion.span 
-          animate={{ y: [0, -3, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          className="text-emerald-400 font-bold"
-        >
-          ▲
-        </motion.span>
-        Swipe Up / Tap
-      </div>
+
 
       {/* Page Indicators */}
       <div className="fixed bottom-[115px] left-1/2 -translate-x-1/2 flex gap-2 z-20">

@@ -12,4 +12,4 @@ export interface WidgetInfo {
   size: 'small' | 'medium' | 'large';
 }
 
-export type ScreenState = 'AOD' | 'HOME' | 'LIBRARY' | 'SEARCH' | 'LOCK';
+export type ScreenState = 'HOME' | 'LIBRARY' | 'SEARCH' | 'LOCK';

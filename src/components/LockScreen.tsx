@@ -19,7 +19,6 @@ type SecurityMethod = 'pin' | 'fingerprint' | 'face';
 export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
   const { wallpaper, flashlightActive, brightness } = useLauncher();
   const [time, setTime] = useState(new Date());
-  const [isPlaying, setIsPlaying] = useState(true);
 
   // Security layer states
   const [securityActive, setSecurityActive] = useState(false);
@@ -50,6 +49,12 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
   const [autoScanStatus, setAutoScanStatus] = useState('Aligning Face ID Lens...');
   const autoScanTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Timeouts refs
+  const autoUnlockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sysAccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pinErrorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const pinValidationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     
@@ -70,7 +75,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
       if (progress >= 100) {
         if (autoScanTimerRef.current) clearInterval(autoScanTimerRef.current);
         setAutoScanStatus('Unlocking...');
-        setTimeout(() => {
+        autoUnlockTimeoutRef.current = setTimeout(() => {
           onUnlock();
         }, 400);
       }
@@ -81,6 +86,10 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
       if (fingerTimerRef.current) clearInterval(fingerTimerRef.current);
       if (faceTimerRef.current) clearInterval(faceTimerRef.current);
       if (autoScanTimerRef.current) clearInterval(autoScanTimerRef.current);
+      if (autoUnlockTimeoutRef.current) clearTimeout(autoUnlockTimeoutRef.current);
+      if (sysAccessTimeoutRef.current) clearTimeout(sysAccessTimeoutRef.current);
+      if (pinErrorTimeoutRef.current) clearTimeout(pinErrorTimeoutRef.current);
+      if (pinValidationTimeoutRef.current) clearTimeout(pinValidationTimeoutRef.current);
     };
   }, [onUnlock]);
 
@@ -97,7 +106,7 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
 
   const triggerSystemAccessMock = () => {
     // Show authorized animation, brief success and unlock
-    setTimeout(() => {
+    sysAccessTimeoutRef.current = setTimeout(() => {
       onUnlock();
     }, 600);
   };
@@ -117,13 +126,13 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
           setIsChangingPin(false);
           setEnteredPin('');
           setPinError('New Security PIN Configured.');
-          setTimeout(() => setPinError(null), 3000);
+          pinErrorTimeoutRef.current = setTimeout(() => setPinError(null), 3000);
         } else {
           // Authentication
           if (nextPin === defaultPin) {
             triggerSystemAccessMock();
           } else {
-            setTimeout(() => {
+            pinValidationTimeoutRef.current = setTimeout(() => {
               setPinError('Invalid Code - Access Prohibited');
               setEnteredPin('');
             }, 300);
@@ -303,14 +312,14 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
               key="manual-fallback"
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 text-[9px] text-white/50 tracking-widest font-mono uppercase"
+              className="flex items-center gap-1.5 bg-white/5 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 text-[10px] text-white/70"
             >
-              <Lock size={9} className="text-amber-400" /> Swipe up to unlock with passcode
+              <Lock size={11} className="text-amber-400" /> Locked
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-
+      
       {/* CENTER: Massive Liquid Glass Clock & Widgets */}
       <div className="relative z-10 flex flex-col items-center gap-4 mt-6">
         
@@ -340,54 +349,6 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
             </span>
           </div>
         </motion.div>
-
-        {/* Dynamic Glass Music Player (Shows only if we simulate active audio) */}
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="bg-white/5 border border-white/15 backdrop-blur-2xl rounded-3xl p-4 w-full max-w-[320px] flex items-center gap-4 shadow-lg relative overflow-hidden text-left"
-        >
-          {/* Gloss */}
-          <div className="absolute top-0 inset-x-0 h-3 bg-white/5 pointer-events-none" />
-          
-          <div className="w-11 h-11 bg-cover bg-center rounded-xl border border-white/10 relative shadow-md" style={{ backgroundImage: 'url(https://picsum.photos/seed/synth/120/120)' }}>
-            <div className="absolute inset-0 bg-black/10" />
-            <Music size={14} className="absolute bottom-1 right-1 text-white/60" />
-          </div>
-
-          <div className="flex-grow min-w-0">
-            <h5 className="font-bold text-xs text-white truncate">Silent Signal Waves</h5>
-            <p className="text-[10px] text-white/50 truncate font-mono">P2P Synthetics</p>
-          </div>
-
-          <button 
-            onClick={(e) => { e.stopPropagation(); setIsPlaying(!isPlaying); }}
-            className="interactive-click w-8 h-8 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white active:scale-90 transition-all hover:bg-white/20"
-          >
-            {isPlaying ? <Pause size={12} fill="white" /> : <Play size={12} fill="white" className="ml-0.5" />}
-          </button>
-        </motion.div>
-
-        {/* Unread Glass Notification Banner */}
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white/3 border border-white/10 backdrop-blur-2xl rounded-3xl p-3.5 w-full max-w-[320px] flex gap-3 shadow-md relative overflow-hidden"
-        >
-          <div className="w-8 h-8 rounded-xl bg-red-500 flex items-center justify-center border border-white/10 shadow-sm flex-shrink-0">
-            <Bell size={14} className="text-white" />
-          </div>
-          <div className="text-left font-sans flex-grow min-w-0">
-            <div className="flex justify-between items-center w-full">
-              <span className="font-bold text-[10px] text-white/80 uppercase tracking-tight">Gmail Alert</span>
-              <span className="text-[8px] text-white/40 font-mono">10m ago</span>
-            </div>
-            <h6 className="text-[11px] font-bold text-white mt-0.5 truncate">System Security Alert</h6>
-            <p className="text-[10px] text-white/50 truncate font-mono">New node connection request authorized.</p>
-          </div>
-        </motion.div>
       </div>
 
       {/* BOTTOM: Swipe to unlock and action buttons */}
@@ -406,11 +367,8 @@ export const LockScreen: React.FC<LockScreenProps> = ({ onUnlock }) => {
             transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
             className="flex flex-col items-center justify-center"
           >
-            <ArrowUp size={18} className="text-white animate-pulse" />
+            <ArrowUp size={18} className="text-white/60 animate-pulse" />
           </motion.div>
-          <span className="text-xs font-bold tracking-[0.15em] font-sans text-center">
-            PULL UP TO AUTHENTICATE
-          </span>
           <div className="w-16 h-1 bg-white/40 rounded-full mt-1" />
         </motion.div>
 

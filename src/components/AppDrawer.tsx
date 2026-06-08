@@ -142,17 +142,7 @@ export const AppDrawer: React.FC = () => {
                 <p className="font-mono text-xs">No local application units match query</p>
               </div>
             )}
-            
-            {/* Custom Interactive Stock Android Settings Link Inside Drawer */}
-            <div className="mt-8 mb-4 p-4 rounded-3xl bg-white/5 border border-white/10 text-xs text-center text-white/60 relative overflow-hidden backdrop-blur-md">
-              <div className="absolute top-0 left-[-10%] w-[120%] h-[30%] bg-white/10 rounded-b-[40%] pointer-events-none" />
-              <p className="flex items-center justify-center gap-2 font-mono text-[10px] uppercase tracking-wider text-emerald-400 font-bold">
-                <Sparkles size={11} /> Stock Core Integration Active
-              </p>
-              <p className="text-[11px] leading-relaxed mt-1 text-white/50">
-                Swipe down from top bar anytime to trigger the fast stock quick tiles panel and wallpaper controls.
-              </p>
-            </div>
+
           </div>
         </motion.div>
       )}
